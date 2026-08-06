@@ -1,5 +1,7 @@
 # ChainScribe API
 
+[![CI](https://github.com/DizzyZ7/ChainScribe-API/actions/workflows/ci.yml/badge.svg)](https://github.com/DizzyZ7/ChainScribe-API/actions/workflows/ci.yml)
+
 ChainScribe is a security-focused backend for publishing articles and comments on a
 cryptocurrency website. It implements a versioned Django Ninja API, PostgreSQL persistence,
 opaque API tokens, JWT access/refresh tokens, ownership enforcement, immutable audit events,
