@@ -1,0 +1,5 @@
+-r base.txt
+
+coverage==7.10.7
+pip-audit==2.9.0
+ruff==0.13.0
