@@ -2,7 +2,7 @@ name: chainscribe
 
 services:
   db:
-    image: postgres:16.13-alpine
+    image: postgres:16.14-alpine
     restart: unless-stopped
     environment:
       POSTGRES_DB: chainscribe
@@ -18,7 +18,7 @@ services:
     networks: [backend]
 
   redis:
-    image: redis:7.4.5-alpine
+    image: redis:7.4.10-alpine
     restart: unless-stopped
     command: ["redis-server", "--appendonly", "yes", "--maxmemory-policy", "noeviction"]
     volumes:

@@ -31,7 +31,7 @@ jobs:
     runs-on: ubuntu-24.04
     services:
       postgres:
-        image: postgres:16.13-alpine
+        image: postgres:16.14-alpine
         env:
           POSTGRES_DB: chainscribe_test
           POSTGRES_USER: chainscribe
@@ -44,7 +44,7 @@ jobs:
           --health-timeout 5s
           --health-retries 20
       redis:
-        image: redis:7.4.5-alpine
+        image: redis:7.4.10-alpine
         ports:
           - 6379:6379
         options: >-
@@ -81,7 +81,7 @@ jobs:
     runs-on: ubuntu-24.04
     services:
       postgres:
-        image: postgres:16.13-alpine
+        image: postgres:16.14-alpine
         env:
           POSTGRES_DB: chainscribe_test
           POSTGRES_USER: chainscribe
@@ -94,7 +94,7 @@ jobs:
           --health-timeout 5s
           --health-retries 20
       redis:
-        image: redis:7.4.5-alpine
+        image: redis:7.4.10-alpine
         ports:
           - 6379:6379
     steps:
