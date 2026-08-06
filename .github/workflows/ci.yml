@@ -4,14 +4,14 @@ on:
   pull_request:
     branches: [main]
   schedule:
-    - cron: "*/5 * * * *"
+    - cron: "35 * * * *"
 
 permissions:
   contents: read
 
 concurrency:
   group: ci-${{ github.workflow }}-${{ github.ref }}
-  cancel-in-progress: true
+  cancel-in-progress: ${{ github.event_name != 'schedule' }}
 
 env:
   DJANGO_SETTINGS_MODULE: config.settings.test
