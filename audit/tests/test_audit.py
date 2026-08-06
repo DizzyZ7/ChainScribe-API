@@ -19,11 +19,18 @@ class AuditEventTests(ApiTestMixin, TestCase):
             action="test.created",
             entity_type="test",
             entity_id="1",
-            metadata={"token": "secret-token", "safe": "value"},
+            metadata={
+                "token": "secret-token",
+                "content": "publication text",
+                "safe": "value",
+                "unexpected_secret": "A" * 256,
+            },
         )
 
         self.assertEqual(event.metadata["token"], "[REDACTED]")
+        self.assertEqual(event.metadata["content"], "[REDACTED]")
         self.assertEqual(event.metadata["safe"], "value")
+        self.assertNotIn("A" * 256, event.metadata["unexpected_secret"])
 
     def test_saved_audit_event_cannot_be_changed_or_deleted(self):
         event = record_audit(

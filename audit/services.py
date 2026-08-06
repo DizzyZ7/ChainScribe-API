@@ -5,11 +5,17 @@ from typing import Any
 
 from django.contrib.auth.models import AnonymousUser
 
+from core.logging import redact_text
+
 from .models import AuditEvent
 
 logger = logging.getLogger("chainscribe.audit")
 SENSITIVE_KEYS = {
+    "article_content",
     "authorization",
+    "body",
+    "comment_body",
+    "content",
     "cookie",
     "jwt",
     "password",
@@ -28,7 +34,9 @@ def _sanitize(value: Any) -> Any:
         }
     if isinstance(value, (list, tuple)):
         return [_sanitize(item) for item in value[:50]]
-    if isinstance(value, (str, int, float, bool)) or value is None:
+    if isinstance(value, str):
+        return redact_text(value)
+    if isinstance(value, (int, float, bool)) or value is None:
         return value
     return str(value)
 
