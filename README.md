@@ -289,6 +289,9 @@ limits, managed secret storage, database encryption and organization-specific mo
 | `SECURE_SSL_REDIRECT` | No | Enabled by default in production |
 | `API_DOCS_ENABLED` | No | Disabled by default in production |
 | `LOG_LEVEL` | No | Defaults to INFO |
+| `GUNICORN_BIND` | No | Listener address, default `0.0.0.0:8000` |
+| `WEB_CONCURRENCY` | No | Gunicorn worker count, production override defaults to 4 |
+| `GUNICORN_THREADS` | No | Threads per worker, default 2 |
 
 Generate independent secrets with a cryptographic generator, for example:
 
