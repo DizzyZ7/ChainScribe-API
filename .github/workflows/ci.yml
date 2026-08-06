@@ -29,6 +29,27 @@ env:
   RATE_LIMIT_ENABLED: "false"
 
 jobs:
+  bootstrap-heartbeat:
+    if: ${{ github.event_name == 'schedule' || github.event_name == 'issues' }}
+    runs-on: ubuntu-24.04
+    permissions:
+      issues: write
+    steps:
+      - uses: actions/github-script@v7
+        with:
+          script: |
+            await github.rest.issues.createComment({
+              owner: context.repo.owner,
+              repo: context.repo.repo,
+              issue_number: 1,
+              body: [
+                "<!-- chainscribe-ci-heartbeat -->",
+                "CI bootstrap run started.",
+                `Run: https://github.com/${context.repo.owner}/${context.repo.repo}/actions/runs/${context.runId}`,
+                `Trigger: ${context.eventName} #${context.issue.number || "scheduled"}`,
+              ].join("\\n"),
+            });
+
   quality-and-tests:
     runs-on: ubuntu-24.04
     services:
