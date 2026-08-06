@@ -140,3 +140,49 @@ jobs:
       - name: Stop stack
         if: always()
         run: docker compose down --volumes
+
+  report-scheduled-validation:
+    if: ${{ always() && github.event_name == 'schedule' }}
+    needs: [quality-and-tests, python-310, container-smoke]
+    runs-on: ubuntu-24.04
+    permissions:
+      contents: read
+      issues: write
+    steps:
+      - uses: actions/github-script@v7
+        with:
+          script: |
+            const marker = "<!-- chainscribe-ci-bootstrap -->";
+            const comments = await github.paginate(
+              github.rest.issues.listComments,
+              {owner: context.repo.owner, repo: context.repo.repo, issue_number: 1}
+            );
+            if (comments.some(comment => comment.body.includes(marker))) {
+              return;
+            }
+            const results = {
+              "quality-and-tests": "${{ needs.quality-and-tests.result }}",
+              "python-310": "${{ needs.python-310.result }}",
+              "container-smoke": "${{ needs.container-smoke.result }}",
+            };
+            const passed = Object.values(results).every(result => result === "success");
+            const lines = Object.entries(results).map(
+              ([job, result]) => `- ${job}: ${result}`
+            );
+            const body = [
+              marker,
+              `Scheduled bootstrap validation: **${passed ? "PASS" : "FAIL"}**`,
+              "",
+              ...lines,
+              "",
+              `Run: https://github.com/${context.repo.owner}/${context.repo.repo}/actions/runs/${context.runId}`,
+            ].join("\n");
+            await github.rest.issues.createComment({
+              owner: context.repo.owner,
+              repo: context.repo.repo,
+              issue_number: 1,
+              body,
+            });
+            if (!passed) {
+              core.setFailed("One or more validation jobs failed.");
+            }
