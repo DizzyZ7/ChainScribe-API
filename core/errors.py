@@ -5,7 +5,6 @@ from django.core.exceptions import SuspiciousOperation
 from ninja.errors import HttpError, ValidationError
 from ninja_extra.exceptions import APIException
 
-
 logger = logging.getLogger("chainscribe.error")
 
 

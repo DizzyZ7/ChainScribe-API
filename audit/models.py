@@ -48,6 +48,9 @@ class AuditEvent(models.Model):
             models.Index(fields=("actor", "timestamp"), name="audit_actor_time_idx"),
         ]
 
+    def __str__(self) -> str:
+        return f"{self.timestamp:%Y-%m-%d %H:%M:%S} {self.action}"
+
     def save(self, *args, **kwargs):
         if self.pk and type(self).objects.filter(pk=self.pk).exists():
             raise ValidationError("Audit events are immutable.")
@@ -55,6 +58,3 @@ class AuditEvent(models.Model):
 
     def delete(self, *args, **kwargs):
         raise ValidationError("Audit events are immutable.")
-
-    def __str__(self) -> str:
-        return f"{self.timestamp:%Y-%m-%d %H:%M:%S} {self.action}"

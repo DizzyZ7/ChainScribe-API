@@ -7,7 +7,6 @@ from django.contrib.auth.models import AnonymousUser
 
 from .models import AuditEvent
 
-
 logger = logging.getLogger("chainscribe.audit")
 SENSITIVE_KEYS = {
     "authorization",

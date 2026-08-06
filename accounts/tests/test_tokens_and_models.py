@@ -53,14 +53,10 @@ class ApiTokenTests(ApiTestMixin, TestCase):
         old_touch = timezone.now() - timedelta(hours=1)
         ApiToken.objects.filter(pk=token.pk).update(last_used_at=old_touch)
 
-        first = self.client.get(
-            "/api/v1/auth/me", HTTP_AUTHORIZATION=f"Token {raw_token}"
-        )
+        first = self.client.get("/api/v1/auth/me", HTTP_AUTHORIZATION=f"Token {raw_token}")
         token.refresh_from_db()
         first_touch = token.last_used_at
-        second = self.client.get(
-            "/api/v1/auth/me", HTTP_AUTHORIZATION=f"Token {raw_token}"
-        )
+        second = self.client.get("/api/v1/auth/me", HTTP_AUTHORIZATION=f"Token {raw_token}")
         token.refresh_from_db()
 
         self.assertEqual(first.status_code, 200)

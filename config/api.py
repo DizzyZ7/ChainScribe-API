@@ -1,11 +1,11 @@
 from django.conf import settings
 from ninja_extra import NinjaExtraAPI
 
-from accounts.api import jwt_router, router as accounts_router
+from accounts.api import jwt_router
+from accounts.api import router as accounts_router
 from blog.api import router as blog_router
 from core.api import router as core_router
 from core.errors import register_exception_handlers
-
 
 api = NinjaExtraAPI(
     title="ChainScribe API",

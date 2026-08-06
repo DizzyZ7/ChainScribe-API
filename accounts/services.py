@@ -15,7 +15,6 @@ from .exceptions import DuplicateUsernameError, InvalidCredentialsError
 from .models import ApiToken, User
 from .validators import normalize_username
 
-
 logger = logging.getLogger("chainscribe.accounts")
 
 

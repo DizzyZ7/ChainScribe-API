@@ -39,9 +39,7 @@ def create_article(*, request, actor, data: dict) -> Article:
 @transaction.atomic
 def update_article(*, request, actor, article_id, changes: dict) -> Article:
     article = (
-        Article.objects.select_for_update()
-        .select_related("author", "category")
-        .get(pk=article_id)
+        Article.objects.select_for_update().select_related("author", "category").get(pk=article_id)
     )
     if article.author_id != actor.pk:
         record_audit(

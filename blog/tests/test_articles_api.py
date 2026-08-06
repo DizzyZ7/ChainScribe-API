@@ -209,9 +209,7 @@ class ArticleItemApiTests(ApiTestMixin, TestCase):
     def test_patch_rejects_empty_payload_and_author_id(self):
         article = self.create_article(self.owner)
 
-        empty = self.patch_json(
-            f"/api/v1/articles/{article.pk}", {}, **self.owner_headers
-        )
+        empty = self.patch_json(f"/api/v1/articles/{article.pk}", {}, **self.owner_headers)
         forged = self.patch_json(
             f"/api/v1/articles/{article.pk}",
             {"author_id": str(self.other.pk)},

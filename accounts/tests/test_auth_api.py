@@ -3,7 +3,7 @@ from django.test import TestCase, override_settings
 
 from accounts.models import ApiToken
 from audit.models import AuditEvent
-from tests.helpers import ApiTestMixin, TEST_PASSWORD
+from tests.helpers import TEST_PASSWORD, ApiTestMixin
 
 
 class OpaqueAuthenticationApiTests(ApiTestMixin, TestCase):
@@ -51,7 +51,7 @@ class OpaqueAuthenticationApiTests(ApiTestMixin, TestCase):
         response = self.post_json(
             "/api/v1/auth/register",
             {
-                "username": "admіn",
+                "username": "admіn",  # noqa: RUF001 - intentional Cyrillic confusable
                 "password": TEST_PASSWORD,
                 "is_superuser": True,
             },
@@ -83,9 +83,7 @@ class OpaqueAuthenticationApiTests(ApiTestMixin, TestCase):
 
         self.assertEqual(response.status_code, 401)
         self.assertEqual(response.json()["detail"], "Invalid username or password.")
-        self.assertTrue(
-            AuditEvent.objects.filter(action="auth.login", outcome="denied").exists()
-        )
+        self.assertTrue(AuditEvent.objects.filter(action="auth.login", outcome="denied").exists())
 
     def test_logout_revokes_current_token(self):
         user = self.create_user("logout-user")
@@ -96,9 +94,7 @@ class OpaqueAuthenticationApiTests(ApiTestMixin, TestCase):
         self.assertEqual(response.status_code, 204)
         token = ApiToken.objects.get(digest__isnull=False)
         self.assertIsNotNone(token.revoked_at)
-        me_response = self.client.get(
-            "/api/v1/auth/me", HTTP_AUTHORIZATION=f"Token {raw_token}"
-        )
+        me_response = self.client.get("/api/v1/auth/me", HTTP_AUTHORIZATION=f"Token {raw_token}")
         self.assertEqual(me_response.status_code, 401)
 
     def test_logout_rejects_missing_or_jwt_credentials(self):

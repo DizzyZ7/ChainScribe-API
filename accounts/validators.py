@@ -3,7 +3,6 @@ import unicodedata
 
 from django.core.validators import RegexValidator
 
-
 USERNAME_PATTERN = re.compile(r"^[a-z0-9_.-]+$")
 username_validator = RegexValidator(
     regex=USERNAME_PATTERN,

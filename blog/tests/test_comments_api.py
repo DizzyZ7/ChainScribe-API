@@ -37,9 +37,7 @@ class CommentCollectionApiTests(ApiTestMixin, TestCase):
         self.assertEqual(owner.status_code, 200)
 
     def test_comment_list_validates_pagination(self):
-        response = self.client.get(
-            f"/api/v1/articles/{self.article.pk}/comments?offset=-1"
-        )
+        response = self.client.get(f"/api/v1/articles/{self.article.pk}/comments?offset=-1")
 
         self.assertEqual(response.status_code, 422)
 
@@ -122,9 +120,7 @@ class CommentItemApiTests(ApiTestMixin, TestCase):
         hidden_comment = self.create_comment(draft, self.article_owner)
 
         hidden = self.client.get(f"/api/v1/comments/{hidden_comment.pk}")
-        missing = self.client.get(
-            "/api/v1/comments/00000000-0000-0000-0000-000000000000"
-        )
+        missing = self.client.get("/api/v1/comments/00000000-0000-0000-0000-000000000000")
 
         self.assertEqual(hidden.status_code, 404)
         self.assertEqual(missing.status_code, 404)

@@ -1,6 +1,5 @@
 from .base import *
 
-
 DEBUG = False
 API_DOCS_ENABLED = False
 RATE_LIMIT_ENABLED = env_bool("RATE_LIMIT_ENABLED", False)

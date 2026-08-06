@@ -19,7 +19,6 @@ from .exceptions import DuplicateUsernameError, InvalidCredentialsError
 from .schemas import LoginInput, OpaqueTokenOutput, RegisterInput, UserOutput
 from .services import login_user, register_user, revoke_api_token
 
-
 router = Router(tags=["Authentication"])
 jwt_router = Router(tags=["Authentication: JWT"])
 

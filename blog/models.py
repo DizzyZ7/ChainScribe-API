@@ -5,7 +5,6 @@ from django.core.exceptions import ValidationError
 from django.core.validators import MaxLengthValidator
 from django.db import models
 
-
 ARTICLE_CONTENT_MAX_LENGTH = 100_000
 COMMENT_BODY_MAX_LENGTH = 5_000
 
@@ -23,6 +22,9 @@ class Category(models.Model):
         ordering = ("name", "id")
         verbose_name_plural = "categories"
 
+    def __str__(self) -> str:
+        return self.name
+
     def clean(self):
         self.name = self.name.strip()
         self.slug = self.slug.strip().lower()
@@ -30,9 +32,6 @@ class Category(models.Model):
         if not self.name:
             raise ValidationError({"name": "Name cannot be blank."})
         super().clean()
-
-    def __str__(self) -> str:
-        return self.name
 
 
 class Article(models.Model):
@@ -78,6 +77,9 @@ class Article(models.Model):
             models.Index(fields=("category", "created_at"), name="article_cat_time_idx"),
         ]
 
+    def __str__(self) -> str:
+        return self.title
+
     def clean(self):
         self.title = self.title.strip()
         self.content = self.content.strip()
@@ -89,9 +91,6 @@ class Article(models.Model):
         if errors:
             raise ValidationError(errors)
         super().clean()
-
-    def __str__(self) -> str:
-        return self.title
 
 
 class Comment(models.Model):
@@ -116,11 +115,11 @@ class Comment(models.Model):
             models.Index(fields=("author", "created_at"), name="comment_author_time_idx"),
         ]
 
+    def __str__(self) -> str:
+        return f"Comment {self.id}"
+
     def clean(self):
         self.body = self.body.strip()
         if not self.body:
             raise ValidationError({"body": "Comment cannot be blank."})
         super().clean()
-
-    def __str__(self) -> str:
-        return f"Comment {self.id}"

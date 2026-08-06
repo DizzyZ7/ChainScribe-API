@@ -3,7 +3,6 @@ import logging
 import re
 from datetime import datetime, timezone
 
-
 JWT_RE = re.compile(r"\beyJ[A-Za-z0-9_-]+\.[A-Za-z0-9_-]+\.[A-Za-z0-9_-]+\b")
 OPAQUE_TOKEN_RE = re.compile(r"\b[A-Za-z0-9_-]{256}\b")
 AUTH_HEADER_RE = re.compile(r"(?i)(authorization|cookie)\s*[:=]\s*[^\s,;]+")

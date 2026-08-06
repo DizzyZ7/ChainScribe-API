@@ -4,7 +4,6 @@ from django.core.exceptions import ImproperlyConfigured
 
 from .base import *
 
-
 DEBUG = False
 API_DOCS_ENABLED = env_bool("API_DOCS_ENABLED", False)
 

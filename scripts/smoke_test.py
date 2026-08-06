@@ -3,11 +3,13 @@ import json
 import os
 import sys
 import urllib.error
+import urllib.parse
 import urllib.request
 import uuid
 
-
 BASE_URL = os.getenv("CHAIN_SCRIBE_BASE_URL", "http://127.0.0.1:8000/api/v1").rstrip("/")
+if urllib.parse.urlsplit(BASE_URL).scheme not in {"http", "https"}:
+    raise SystemExit("CHAIN_SCRIBE_BASE_URL must use http or https")
 
 
 def request(method: str, path: str, payload=None, token: str | None = None, expected=(200,)):
@@ -15,9 +17,13 @@ def request(method: str, path: str, payload=None, token: str | None = None, expe
     headers = {"Content-Type": "application/json"}
     if token:
         headers["Authorization"] = f"Token {token}"
-    req = urllib.request.Request(f"{BASE_URL}{path}", data=data, headers=headers, method=method)
+    req = urllib.request.Request(  # noqa: S310 - BASE_URL scheme is validated above
+        f"{BASE_URL}{path}", data=data, headers=headers, method=method
+    )
     try:
-        with urllib.request.urlopen(req, timeout=10) as response:
+        with urllib.request.urlopen(  # noqa: S310 - request URL is scheme-validated
+            req, timeout=10
+        ) as response:
             status = response.status
             raw = response.read()
     except urllib.error.HTTPError as exc:

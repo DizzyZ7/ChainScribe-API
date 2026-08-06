@@ -1,6 +1,7 @@
 from uuid import UUID
 
-from django.core.exceptions import PermissionDenied, ValidationError as DjangoValidationError
+from django.core.exceptions import PermissionDenied
+from django.core.exceptions import ValidationError as DjangoValidationError
 from django.http import HttpResponse, JsonResponse
 from ninja import Router
 from ninja.errors import HttpError
@@ -30,7 +31,6 @@ from .services import (
     update_article,
     update_comment,
 )
-
 
 router = Router(tags=["Blog"])
 
@@ -220,9 +220,7 @@ def list_comments(request, article_id: UUID, limit: int = 20, offset: int = 0):
     auth=dual_auth,
 )
 def add_comment(request, article_id: UUID, payload: CommentCreateInput):
-    article = (
-        Article.objects.select_related("author", "category").filter(pk=article_id).first()
-    )
+    article = Article.objects.select_related("author", "category").filter(pk=article_id).first()
     if article is None or not can_read_article(article, request.user):
         raise HttpError(404, "Article not found.")
     try:

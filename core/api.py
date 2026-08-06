@@ -5,7 +5,6 @@ from ninja import Router
 
 from .schemas import ErrorSchema, HealthSchema
 
-
 router = Router(tags=["System"])
 logger = logging.getLogger("chainscribe.health")
 

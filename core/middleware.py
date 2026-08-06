@@ -7,7 +7,6 @@ from django.conf import settings
 from django.core.cache import cache
 from django.http import JsonResponse
 
-
 logger = logging.getLogger("chainscribe.request")
 AUTH_RATE_LIMIT_PATHS = {
     "/api/v1/auth/register",

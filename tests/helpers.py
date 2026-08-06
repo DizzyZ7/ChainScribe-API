@@ -6,7 +6,6 @@ from ninja_jwt.tokens import RefreshToken
 from accounts.services import issue_api_token
 from blog.models import Article, Category, Comment
 
-
 TEST_PASSWORD = "Correct-Horse-Battery-2026!"
 
 

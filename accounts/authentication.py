@@ -14,7 +14,6 @@ from ninja_jwt.authentication import JWTAuth
 from .models import ApiToken
 from .services import digest_token
 
-
 logger = logging.getLogger("chainscribe.authentication")
 OPAQUE_TOKEN_PATTERN = re.compile(r"^[A-Za-z0-9_-]{256}$")
 
