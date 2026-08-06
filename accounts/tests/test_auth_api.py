@@ -97,15 +97,18 @@ class OpaqueAuthenticationApiTests(ApiTestMixin, TestCase):
         me_response = self.client.get("/api/v1/auth/me", HTTP_AUTHORIZATION=f"Token {raw_token}")
         self.assertEqual(me_response.status_code, 401)
 
-    def test_logout_rejects_missing_or_jwt_credentials(self):
+    @override_settings(DEBUG=True)
+    def test_logout_rejects_missing_or_jwt_credentials_without_logging_token(self):
         user = self.create_user("logout-user")
-        jwt_headers, _ = self.jwt_header(user)
+        jwt_headers, raw_jwt = self.jwt_header(user)
 
         missing = self.post_json("/api/v1/auth/logout", {})
-        jwt_response = self.post_json("/api/v1/auth/logout", {}, **jwt_headers)
+        with self.assertNoLogs("django", level="ERROR"):
+            jwt_response = self.post_json("/api/v1/auth/logout", {}, **jwt_headers)
 
         self.assertEqual(missing.status_code, 401)
         self.assertEqual(jwt_response.status_code, 401)
+        self.assertNotIn(raw_jwt, jwt_response.content.decode())
 
     def test_me_accepts_opaque_token(self):
         user = self.create_user("opaque-user")

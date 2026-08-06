@@ -54,6 +54,15 @@ def _authenticate_opaque(request, raw_token: str):
 class OpaqueTokenAuth(HttpBearer):
     openapi_scheme = "token"
 
+    def __call__(self, request):
+        authorization = request.headers.get(self.header)
+        if not authorization:
+            return None
+        parts = authorization.split()
+        if len(parts) != 2 or parts[0].lower() != self.openapi_scheme:
+            return None
+        return self.authenticate(request, parts[1])
+
     def authenticate(self, request, token):
         return _authenticate_opaque(request, token)
 
