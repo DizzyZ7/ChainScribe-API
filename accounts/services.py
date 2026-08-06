@@ -90,15 +90,16 @@ def login_user(*, request, username: str, password: str) -> tuple[User, ApiToken
             extra={"request_id": str(request.request_id), "action": "login", "outcome": "denied"},
         )
         raise InvalidCredentialsError
-    token, raw_token = issue_api_token(user=user)
-    User.objects.filter(pk=user.pk).update(last_login=timezone.now())
-    record_audit(
-        request=request,
-        actor=user,
-        action="auth.login",
-        entity_type="user",
-        entity_id=user.pk,
-    )
+    with transaction.atomic():
+        token, raw_token = issue_api_token(user=user)
+        User.objects.filter(pk=user.pk).update(last_login=timezone.now())
+        record_audit(
+            request=request,
+            actor=user,
+            action="auth.login",
+            entity_type="user",
+            entity_id=user.pk,
+        )
     logger.info(
         "auth.login",
         extra={
