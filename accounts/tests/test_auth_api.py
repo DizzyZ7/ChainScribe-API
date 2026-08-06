@@ -38,7 +38,7 @@ class OpaqueAuthenticationApiTests(ApiTestMixin, TestCase):
         self.assertEqual(response.json()["code"], "username_conflict")
 
     def test_register_rejects_weak_password_without_echoing_it(self):
-        weak_password = "password"
+        weak_password = "password123"
         response = self.post_json(
             "/api/v1/auth/register",
             {"username": "weak-user", "password": weak_password},

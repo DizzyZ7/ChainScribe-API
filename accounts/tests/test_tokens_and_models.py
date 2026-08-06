@@ -64,6 +64,14 @@ class ApiTokenTests(ApiTestMixin, TestCase):
         self.assertGreater(first_touch, old_touch)
         self.assertEqual(token.last_used_at, first_touch)
 
+    def test_token_string_and_usable_state_do_not_disclose_digest(self):
+        token, _ = issue_api_token(user=self.user)
+
+        self.assertTrue(token.is_usable)
+        self.assertNotIn(token.digest, str(token))
+        token.revoked_at = timezone.now()
+        self.assertFalse(token.is_usable)
+
 
 class UserModelTests(TestCase):
     def test_username_is_normalized_before_storage(self):

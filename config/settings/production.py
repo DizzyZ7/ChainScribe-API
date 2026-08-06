@@ -20,7 +20,7 @@ if missing:
     )
 
 SECRET_KEY = required["DJANGO_SECRET_KEY"]
-NINJA_JWT["SIGNING_KEY"] = required["JWT_SIGNING_KEY"]
+NINJA_JWT = {**NINJA_JWT, "SIGNING_KEY": required["JWT_SIGNING_KEY"]}
 
 if len(SECRET_KEY) < 50 or len(NINJA_JWT["SIGNING_KEY"]) < 32:
     raise ImproperlyConfigured("Production signing secrets are too short")

@@ -1,8 +1,9 @@
+from django.core.exceptions import ValidationError
 from django.db import IntegrityError, transaction
 from django.db.models.deletion import ProtectedError
 from django.test import TestCase
 
-from blog.models import Article, Comment
+from blog.models import Article, Category, Comment
 from tests.helpers import ApiTestMixin
 
 
@@ -40,3 +41,35 @@ class BlogModelIntegrityTests(ApiTestMixin, TestCase):
         article.delete()
 
         self.assertFalse(Comment.objects.exists())
+
+    def test_model_clean_methods_trim_and_validate_text(self):
+        category = Category(name="  Security  ", slug="  SECURITY  ", description="  News  ")
+        category.clean()
+        category.full_clean()
+        category.save()
+        article = Article(
+            author=self.user, category=category, title="  Title  ", content="  Body  "
+        )
+        article.full_clean()
+        article.save()
+        comment = Comment(article=article, author=self.user, body="  Reviewed  ")
+        comment.full_clean()
+        comment.save()
+
+        self.assertEqual(
+            (category.name, category.slug, category.description), ("Security", "security", "News")
+        )
+        self.assertEqual((article.title, article.content), ("Title", "Body"))
+        self.assertEqual(comment.body, "Reviewed")
+        self.assertEqual(str(category), "Security")
+        self.assertEqual(str(article), "Title")
+        self.assertIn(str(comment.pk), str(comment))
+
+    def test_model_clean_methods_reject_whitespace_only_text(self):
+        with self.assertRaises(ValidationError):
+            Category(name=" ", slug="valid").full_clean()
+        with self.assertRaises(ValidationError):
+            Article(author=self.user, title=" ", content=" ").full_clean()
+        article = self.create_article(self.user)
+        with self.assertRaises(ValidationError):
+            Comment(article=article, author=self.user, body=" ").full_clean()
