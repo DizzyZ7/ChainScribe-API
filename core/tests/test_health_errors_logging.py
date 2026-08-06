@@ -28,7 +28,10 @@ class HealthAndErrorContractTests(ApiTestMixin, TestCase):
     def test_readiness_returns_safe_503_when_database_fails(self):
         broken_connection = MagicMock()
         broken_connection.cursor.side_effect = RuntimeError("database internals")
-        with patch("core.api.connections", {"default": broken_connection}):
+        with (
+            patch("core.api.connections", {"default": broken_connection}),
+            self.assertLogs("chainscribe.health", level="ERROR"),
+        ):
             response = self.client.get("/api/v1/health/ready")
 
         self.assertEqual(response.status_code, 503)

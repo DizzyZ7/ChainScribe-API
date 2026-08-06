@@ -21,7 +21,7 @@ def ready(request):
             cursor.execute("SELECT 1")
             cursor.fetchone()
     except Exception:
-        logger.warning(
+        logger.error(
             "health.database_unavailable",
             extra={"request_id": str(request.request_id), "outcome": "failure"},
         )
