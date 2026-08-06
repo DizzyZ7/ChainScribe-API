@@ -123,11 +123,18 @@ class JsonLoggingTests(TestCase):
     def test_redactor_removes_opaque_and_jwt_tokens(self):
         opaque = "A" * 256
         jwt = "eyJheader.payload.signature"
+        password = "multi word password"
+        malformed_bearer = "short-token-that-must-still-be-private"
 
-        redacted = redact_text(f"Authorization: Token {opaque} jwt={jwt}")
+        redacted = redact_text(
+            f"Authorization: Bearer {malformed_bearer}, token={opaque}, "
+            f"jwt={jwt}, password={password}"
+        )
 
         self.assertNotIn(opaque, redacted)
         self.assertNotIn(jwt, redacted)
+        self.assertNotIn(password, redacted)
+        self.assertNotIn(malformed_bearer, redacted)
 
     def test_formatter_emits_structured_json(self):
         record = logging.LogRecord(

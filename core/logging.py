@@ -5,14 +5,18 @@ from datetime import datetime, timezone
 
 JWT_RE = re.compile(r"\beyJ[A-Za-z0-9_-]+\.[A-Za-z0-9_-]+\.[A-Za-z0-9_-]+\b")
 OPAQUE_TOKEN_RE = re.compile(r"\b[A-Za-z0-9_-]{256}\b")
-AUTH_HEADER_RE = re.compile(r"(?i)(authorization|cookie)\s*[:=]\s*[^\s,;]+")
+AUTH_HEADER_RE = re.compile(r"(?i)\b(authorization|cookie)\s*[:=]\s*[^,\r\n]+")
+SECRET_ASSIGNMENT_RE = re.compile(
+    r"(?i)\b(password|passwd|pwd|secret|token|refresh|access)\s*[:=]\s*[^,;\r\n]+"
+)
 
 
 def redact_text(value: object) -> str:
     text = str(value)
     text = JWT_RE.sub("[REDACTED_JWT]", text)
     text = OPAQUE_TOKEN_RE.sub("[REDACTED_TOKEN]", text)
-    return AUTH_HEADER_RE.sub(r"\1=[REDACTED]", text)
+    text = AUTH_HEADER_RE.sub(r"\1=[REDACTED]", text)
+    return SECRET_ASSIGNMENT_RE.sub(r"\1=[REDACTED]", text)
 
 
 class JsonFormatter(logging.Formatter):
