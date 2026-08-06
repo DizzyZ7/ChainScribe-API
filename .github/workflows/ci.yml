@@ -5,12 +5,14 @@ on:
     branches: [main]
   schedule:
     - cron: "35 * * * *"
+  issues:
+    types: [opened]
 
 permissions:
   contents: read
 
 concurrency:
-  group: ci-${{ github.workflow }}-${{ github.ref }}
+  group: ci-${{ github.workflow }}-${{ github.event_name }}-${{ github.ref }}
   cancel-in-progress: ${{ github.event_name != 'schedule' }}
 
 env:
@@ -55,7 +57,7 @@ jobs:
     steps:
       - uses: actions/checkout@v4
         with:
-          ref: ${{ github.event_name == 'schedule' && 'agent/production-blog-backend' || github.ref }}
+          ref: ${{ (github.event_name == 'schedule' || github.event_name == 'issues') && 'agent/production-blog-backend' || github.ref }}
       - uses: actions/setup-python@v5
         with:
           python-version: "3.12"
@@ -102,7 +104,7 @@ jobs:
     steps:
       - uses: actions/checkout@v4
         with:
-          ref: ${{ github.event_name == 'schedule' && 'agent/production-blog-backend' || github.ref }}
+          ref: ${{ (github.event_name == 'schedule' || github.event_name == 'issues') && 'agent/production-blog-backend' || github.ref }}
       - uses: actions/setup-python@v5
         with:
           python-version: "3.10"
@@ -117,7 +119,7 @@ jobs:
     steps:
       - uses: actions/checkout@v4
         with:
-          ref: ${{ github.event_name == 'schedule' && 'agent/production-blog-backend' || github.ref }}
+          ref: ${{ (github.event_name == 'schedule' || github.event_name == 'issues') && 'agent/production-blog-backend' || github.ref }}
       - name: Validate Compose
         run: docker compose config --quiet
       - name: Build and start stack
@@ -142,7 +144,7 @@ jobs:
         run: docker compose down --volumes
 
   report-scheduled-validation:
-    if: ${{ always() && github.event_name == 'schedule' }}
+    if: ${{ always() && (github.event_name == 'schedule' || github.event_name == 'issues') }}
     needs: [quality-and-tests, python-310, container-smoke]
     runs-on: ubuntu-24.04
     permissions:
