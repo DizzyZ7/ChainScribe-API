@@ -41,6 +41,17 @@ class CommentCollectionApiTests(ApiTestMixin, TestCase):
 
         self.assertEqual(response.status_code, 422)
 
+    def test_comment_list_avoids_n_plus_one_queries(self):
+        for index in range(5):
+            author = self.create_user(f"list-commenter-{index}")
+            self.create_comment(self.article, author, body=f"Comment {index}")
+
+        with self.assertNumQueries(3):
+            response = self.client.get(f"/api/v1/articles/{self.article.pk}/comments")
+
+        self.assertEqual(response.status_code, 200)
+        self.assertEqual(response.json()["count"], 5)
+
     def test_authenticated_user_can_create_comment(self):
         response = self.post_json(
             f"/api/v1/articles/{self.article.pk}/comments",

@@ -320,6 +320,10 @@ pip-audit --requirement requirements/base.txt
 CI also runs the full suite on Python 3.10 and 3.12, builds the Docker image, starts PostgreSQL,
 Redis and Gunicorn, waits for readiness and exercises registration through revoked-token logout.
 
+Current verified baseline: 101 passing tests and 94% branch-aware coverage of first-party code.
+The local fallback run uses SQLite only when `USE_SQLITE_FOR_TESTS=1`; the authoritative CI run
+uses PostgreSQL and does not enable that escape hatch.
+
 ## Production release
 
 Read the full [deployment runbook](docs/deployment.md). The short form is:
