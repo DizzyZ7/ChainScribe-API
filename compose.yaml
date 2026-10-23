@@ -74,7 +74,7 @@ services:
       retries: 20
       start_period: 10s
     stop_grace_period: 30s
-    networks: [backend]
+    networks: [backend, edge]
 
 volumes:
   postgres_data:
@@ -83,3 +83,4 @@ volumes:
 networks:
   backend:
     internal: true
+  edge: {}

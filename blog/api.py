@@ -164,8 +164,6 @@ def get_article(request, article_id: UUID):
     auth=dual_auth,
 )
 def patch_article(request, article_id: UUID, payload: ArticleUpdateInput):
-    if not Article.objects.filter(pk=article_id).exists():
-        raise HttpError(404, "Article not found.")
     changes = payload.model_dump(exclude_unset=True)
     if not changes:
         raise HttpError(422, "At least one field must be supplied.")
@@ -176,6 +174,8 @@ def patch_article(request, article_id: UUID, payload: ArticleUpdateInput):
             article_id=article_id,
             changes=changes,
         )
+    except Article.DoesNotExist:
+        raise HttpError(404, "Article not found.") from None
     except PermissionDenied:
         return _permission_denied(request, "article", article_id)
     except DjangoValidationError as exc:
@@ -189,10 +189,10 @@ def patch_article(request, article_id: UUID, payload: ArticleUpdateInput):
     auth=dual_auth,
 )
 def remove_article(request, article_id: UUID):
-    if not Article.objects.filter(pk=article_id).exists():
-        raise HttpError(404, "Article not found.")
     try:
         delete_article(request=request, actor=request.user, article_id=article_id)
+    except Article.DoesNotExist:
+        raise HttpError(404, "Article not found.") from None
     except PermissionDenied:
         return _permission_denied(request, "article", article_id)
     return HttpResponse(status=204)
@@ -264,8 +264,6 @@ def get_comment(request, comment_id: UUID):
     auth=dual_auth,
 )
 def patch_comment(request, comment_id: UUID, payload: CommentUpdateInput):
-    if not Comment.objects.filter(pk=comment_id).exists():
-        raise HttpError(404, "Comment not found.")
     try:
         comment = update_comment(
             request=request,
@@ -273,6 +271,8 @@ def patch_comment(request, comment_id: UUID, payload: CommentUpdateInput):
             comment_id=comment_id,
             body=payload.body,
         )
+    except Comment.DoesNotExist:
+        raise HttpError(404, "Comment not found.") from None
     except PermissionDenied:
         return _permission_denied(request, "comment", comment_id)
     except DjangoValidationError as exc:
@@ -286,10 +286,10 @@ def patch_comment(request, comment_id: UUID, payload: CommentUpdateInput):
     auth=dual_auth,
 )
 def remove_comment(request, comment_id: UUID):
-    if not Comment.objects.filter(pk=comment_id).exists():
-        raise HttpError(404, "Comment not found.")
     try:
         delete_comment(request=request, actor=request.user, comment_id=comment_id)
+    except Comment.DoesNotExist:
+        raise HttpError(404, "Comment not found.") from None
     except PermissionDenied:
         return _permission_denied(request, "comment", comment_id)
     return HttpResponse(status=204)
