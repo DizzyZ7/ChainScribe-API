@@ -39,7 +39,7 @@ def create_article(*, request, actor, data: dict) -> Article:
 def update_article(*, request, actor, article_id, changes: dict) -> Article:
     with transaction.atomic():
         article = (
-            Article.objects.select_for_update()
+            Article.objects.select_for_update(of=("self",))
             .select_related("author", "category")
             .get(pk=article_id)
         )
