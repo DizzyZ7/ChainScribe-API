@@ -34,7 +34,9 @@ RUN python -m pip install /wheels/* && rm -rf /wheels
 
 WORKDIR /app
 COPY --chown=chainscribe:chainscribe . /app
-RUN chmod 0755 /app/scripts/entrypoint.sh
+RUN mkdir -p /app/staticfiles \
+    && chown chainscribe:chainscribe /app/staticfiles \
+    && chmod 0755 /app/scripts/entrypoint.sh
 
 USER chainscribe
 EXPOSE 8000
